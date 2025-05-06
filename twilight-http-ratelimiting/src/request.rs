@@ -174,6 +174,8 @@ pub enum Path {
     ChannelsIdWebhooks(u64),
     /// Operating on an application's entitlements.
     ApplicationIdEntitlements(u64),
+    /// Operating on application's role connections.
+    ApplicationIdRoleConnections(u64),
     /// Operating on an application's SKUs.
     ApplicationIdSKUs(u64),
     /// Operating with the gateway information.
@@ -290,6 +292,8 @@ pub enum Path {
     UsersIdGuildsId,
     /// Operating on the state of a guild that the user, as a member, is in.
     UsersIdGuildsIdMember,
+    /// Operating on the user's role connection.
+    UsersMeApplicationsIdRoleConnection,
     /// Operating on the voice regions available to the current user.
     VoiceRegions,
     /// Operating on a webhook as a bot.
@@ -356,6 +360,10 @@ impl FromStr for Path {
             ["applications", id, "guilds", _, "commands", _]
             | ["applications", id, "guilds", _, "commands", _, "permissions"] => {
                 ApplicationGuildCommandId(parse_id(id)?)
+            }
+            ["applications", id, "role-connections"]
+            | ["applications", id, "role-connections", "metadata"] => {
+                ApplicationIdRoleConnections(parse_id(id)?)
             }
             ["applications", id, "skus"] => ApplicationIdSKUs(parse_id(id)?),
             ["channels", id] => ChannelsId(parse_id(id)?),
@@ -464,6 +472,9 @@ impl FromStr for Path {
             ["users", _, "guilds"] => UsersIdGuilds,
             ["users", _, "guilds", _] => UsersIdGuildsId,
             ["users", _, "guilds", _, "member"] => UsersIdGuildsIdMember,
+            ["users", "@me", "applications", _, "role-connection"] => {
+                UsersMeApplicationsIdRoleConnection
+            }
             ["voice", "regions"] => VoiceRegions,
             ["webhooks", id] => WebhooksId(parse_id(id)?),
             ["webhooks", id, token] => WebhooksIdToken(parse_id(id)?, token.to_string()),
